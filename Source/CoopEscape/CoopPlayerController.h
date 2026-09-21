@@ -14,4 +14,6 @@ class COOPESCAPE_API ACoopPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void BeginPlay() override;
 };

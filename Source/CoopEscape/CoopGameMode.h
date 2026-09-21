@@ -14,4 +14,13 @@ class COOPESCAPE_API ACoopGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+	ACoopGameMode();
+
+protected:
+	virtual void BeginPlay() override;
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+	virtual void Logout(AController* Exiting) override;
 };
