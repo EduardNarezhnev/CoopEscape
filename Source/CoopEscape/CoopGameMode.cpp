@@ -5,6 +5,7 @@
 #include "CoopGameState.h"
 #include "CoopPlayerState.h"
 #include "CoopPlayerController.h"
+#include "CoopCharacter.h"
 #include "GameFramework/PlayerState.h"
 
 ACoopGameMode::ACoopGameMode()
@@ -12,6 +13,7 @@ ACoopGameMode::ACoopGameMode()
     GameStateClass = ACoopGameState::StaticClass();
     PlayerStateClass = ACoopPlayerState::StaticClass();
     PlayerControllerClass = ACoopPlayerController::StaticClass();
+    DefaultPawnClass = ACoopCharacter::StaticClass();
 }
 
 void ACoopGameMode::BeginPlay()
