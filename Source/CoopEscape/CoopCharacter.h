@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "CoopCharacter.generated.h"
+
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class COOPESCAPE_API ACoopCharacter : public ACharacter
@@ -24,6 +28,18 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Inventory")
 	int32 CollectedItems = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputMappingContext* DefaultMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* LookAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* JumpAction;
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -39,20 +55,18 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void MoveForward(float Value);
-    void MoveRight(float Value);
-    void Turn(float Value);
-    void LookUp(float Value);
-    void StartJump();
-    void StopJump();
+	void Move(const FInputActionValue &Value);
+	void Look(const FInputActionValue &Value);
+	void StartJump();
+	void StopJump();
 
 private:
 	UFUNCTION()
 	void HandleDeath();
 
 	UFUNCTION()
-	void HandleDamage();
+	void HandleDamage(float DamageAmount);
 
 	UFUNCTION()
-	void HandleHeal();
+	void HandleHeal(float HealAmount);
 };

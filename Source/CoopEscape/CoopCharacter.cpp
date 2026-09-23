@@ -8,6 +8,10 @@
 #include "CoopHealthComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
+#include "InputAction.h"
 
 // Sets default values
 ACoopCharacter::ACoopCharacter()
@@ -17,17 +21,13 @@ ACoopCharacter::ACoopCharacter()
 	
 	bReplicates = true;
 	SetReplicateMovement(true);
-	//SetNetUpdateFrequency(30.f);
-	//SetMinNetUpdateFrequency(10.f);
 	bAlwaysRelevant = true;
-	//SetNetCullDistanceSquared(100000.f);
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
     CameraComponent->SetupAttachment(RootComponent);
     CameraComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 80.0f));
     CameraComponent->bUsePawnControlRotation = true;
 
-	//GetMesh()->SetVisibility(false);
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	HealthComponent = CreateDefaultSubobject<UCoopHealthComponent>(TEXT("HealthComponent"));
@@ -38,6 +38,17 @@ void ACoopCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if(APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+		{
+			if(DefaultMappingContext)
+			{
+				Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			}
+		}
+	}
+
 	if(HealthComponent)
 	{
         HealthComponent->OnDamageTaken.AddDynamic(this, &ACoopCharacter::HandleDamage);
@@ -51,32 +62,42 @@ void ACoopCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &ACoopCharacter::MoveForward);
-    PlayerInputComponent->BindAxis("MoveRight", this, &ACoopCharacter::MoveRight);
-    PlayerInputComponent->BindAxis("Turn", this, &ACoopCharacter::Turn);
-    PlayerInputComponent->BindAxis("LookUp", this, &ACoopCharacter::LookUp);
-    PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACoopCharacter::StartJump);
-    PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACoopCharacter::StopJump);
+	if(UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		if(MoveAction)
+		{
+			EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ACoopCharacter::Move);
+		}
+		if(LookAction)
+		{
+			EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &ACoopCharacter::Look);
+		}
+		if(JumpAction)
+		{
+			EnhancedInput->BindAction(JumpAction, ETriggerEvent::Started, this, &ACoopCharacter::StartJump);
+			EnhancedInput->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACoopCharacter::StopJump);
+		}
+	}
 }
 
-void ACoopCharacter::MoveForward(float Value)
+void ACoopCharacter::Move(const FInputActionValue &Value)
 {
-    AddMovementInput(GetActorForwardVector(), Value);
+	FVector2D MoveVector = Value.Get<FVector2D>();
+	if(Controller && MoveVector.SizeSquared() > 0.f)
+	{
+		AddMovementInput(GetActorForwardVector(), MoveVector.X);
+		AddMovementInput(GetActorRightVector(), MoveVector.Y);
+	}
 }
 
-void ACoopCharacter::MoveRight(float Value)
+void ACoopCharacter::Look(const FInputActionValue &Value)
 {
-	AddMovementInput(GetActorRightVector(), Value);
-}
-
-void ACoopCharacter::Turn(float Value)
-{
-    AddControllerYawInput(Value);
-}
-
-void ACoopCharacter::LookUp(float Value)
-{
-    AddControllerPitchInput(Value);
+	FVector2D LookVector = Value.Get<FVector2D>();
+	if(Controller)
+	{
+		AddControllerYawInput(LookVector.X);
+		AddControllerPitchInput(LookVector.Y);
+	}
 }
 
 void ACoopCharacter::StartJump()
@@ -109,13 +130,13 @@ void ACoopCharacter::HandleDeath()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-void ACoopCharacter::HandleDamage()
+void ACoopCharacter::HandleDamage(float DamageAmount)
 {
     // Красный экран + звук урона (через BP)
     BP_ShowDamageEffect();
 }
 
-void ACoopCharacter::HandleHeal()
+void ACoopCharacter::HandleHeal(float HealAmount)
 {
     // Зелёный экран + звук лечения (через BP)
     BP_ShowHealEffect();
