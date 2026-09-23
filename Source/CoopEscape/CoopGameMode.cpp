@@ -19,7 +19,7 @@ ACoopGameMode::ACoopGameMode()
 void ACoopGameMode::BeginPlay()
 {
     Super::BeginPlay();
-    UE_LOG(LogTemp, Warning, TEXT("CoopGameMode::BeginPlay() called"));
+    CurrentState = EGameState::InProgress;
 }
 
 void ACoopGameMode::PostLogin(APlayerController* NewPlayer)

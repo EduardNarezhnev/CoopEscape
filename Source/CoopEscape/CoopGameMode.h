@@ -6,9 +6,14 @@
 #include "GameFramework/GameModeBase.h"
 #include "CoopGameMode.generated.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
+enum class EGameState : uint8
+{
+	WaitingToStart,
+	InProgress,
+	GameOver
+};
+
 UCLASS()
 class COOPESCAPE_API ACoopGameMode : public AGameModeBase
 {
@@ -17,10 +22,16 @@ class COOPESCAPE_API ACoopGameMode : public AGameModeBase
 public:
 	ACoopGameMode();
 
+	UFUNCTION(BlueprintCallable, Category = "Game")
+	EGameState GetCurrentState() const { return CurrentState; }
+
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	virtual void Logout(AController* Exiting) override;
+
+private:
+	EGameState CurrentState = EGameState::WaitingToStart;
 };
