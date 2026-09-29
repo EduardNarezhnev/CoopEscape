@@ -16,4 +16,11 @@ class COOPESCAPE_API ACoopPlayerController : public APlayerController
 	
 public:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HUDClass;
+
+	UPROPERTY(BlueprintReadOnly, Category = "UI")
+	class UCoopHUD* HUDWidget = nullptr;
 };

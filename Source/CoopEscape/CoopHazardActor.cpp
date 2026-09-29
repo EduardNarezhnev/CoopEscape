@@ -33,10 +33,6 @@ void ACoopHazardActor::BeginPlay()
 	
 	InitialLocation = GetActorLocation();
 
-	if(HasAuthority())
-	{
-		BoxCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ACoopHazardActor::OnOverlapBegin);
-	}
 	if(InactiveMaterial)
 	{
 		MeshComponent->SetMaterial(0, InactiveMaterial);
@@ -62,6 +58,18 @@ void ACoopHazardActor::Tick(float DeltaTime)
 
 	float Distance = FVector::Dist(GetActorLocation(), ClosestPlayer->GetActorLocation());
 	UpdateHazardState(ClosestPlayer, Distance);
+
+    if (bIsActive && bCanApplyDamage)
+    {
+        TArray<AActor*> OverlappingActors;
+        BoxCollisionComponent->GetOverlappingActors(OverlappingActors, ACoopCharacter::StaticClass());
+
+        for (AActor* Actor : OverlappingActors)
+        {
+            ApplyDamageToPlayer(Actor);
+            break;
+        }
+    }
 }
 
 AActor* ACoopHazardActor::FindClosestPlayer() const
@@ -126,20 +134,12 @@ void ACoopHazardActor::ReturnToBase(float DeltaTime)
 	SetActorLocation(NewLocation);
 }
 
-void ACoopHazardActor::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if(!HasAuthority()) return;
-	if(!bIsActive || !bCanApplyDamage) return;
-
-	ACoopCharacter* Player = Cast<ACoopCharacter>(OtherActor);
-	if(!Player) return;
-
-	ApplyDamageToPlayer(Player);
-}
-
 void ACoopHazardActor::ApplyDamageToPlayer(AActor* Player)
 {
-	if(!Config) return;
+	if(!Config)
+	{
+		return;
+	}		
 
 	UGameplayStatics::ApplyDamage(Player, Config->DamageAmount, nullptr, this, UDamageType::StaticClass());
 

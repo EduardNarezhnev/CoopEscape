@@ -117,6 +117,7 @@ float ACoopCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		HealthComponent->TakeDamage(DamageAmount);
 		return DamageAmount;
 	}
+
 	return 0.f;
 }
 
