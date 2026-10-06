@@ -22,15 +22,25 @@ class COOPESCAPE_API ACoopGameMode : public AGameModeBase
 public:
 	ACoopGameMode();
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Game Settings")
+	int32 ItemsToCollect = 3;
+
+	UFUNCTION(BlueprintCallable, Category = "Game")
+	void GameOver(bool bWon);
+
+	UFUNCTION(BlueprintCallable, Category = "Game")
+	void RestartGame();
+	
 	UFUNCTION(BlueprintCallable, Category = "Game")
 	EGameState GetCurrentState() const { return CurrentState; }
 
 protected:
 	virtual void BeginPlay() override;
-
 	virtual void PostLogin(APlayerController* NewPlayer) override;
-
 	virtual void Logout(AController* Exiting) override;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Game")
+	void BP_GameOver(bool bWon);
 
 private:
 	EGameState CurrentState = EGameState::WaitingToStart;

@@ -7,6 +7,7 @@
 #include "CoopPlayerController.h"
 #include "CoopCharacter.h"
 #include "GameFramework/PlayerState.h"
+#include "Kismet/GameplayStatics.h"
 
 ACoopGameMode::ACoopGameMode()
 {
@@ -40,4 +41,33 @@ void ACoopGameMode::Logout(AController* Exiting)
     {
         UE_LOG(LogTemp, Warning, TEXT("Logout: Player disconnected!"));
     }
+}
+
+void ACoopGameMode::GameOver(bool bWon)
+{
+    if(CurrentState == EGameState::GameOver) return;
+
+    CurrentState = EGameState::GameOver;
+
+    UWorld* World = GetWorld();
+    if(World)
+    {
+        APlayerController* PC = World->GetFirstPlayerController();
+        if(PC)
+        {
+            PC->SetPause(true);
+            PC->SetInputMode(FInputModeUIOnly());
+            PC->bShowMouseCursor = true;
+        }
+    }
+
+    BP_GameOver(bWon);
+}
+
+void ACoopGameMode::RestartGame()
+{
+    if(CurrentState != EGameState::GameOver) return;
+
+    FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
+    GetWorld()->ServerTravel(CurrentLevelName + "?listen");
 }

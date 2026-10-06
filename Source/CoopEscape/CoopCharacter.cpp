@@ -80,6 +80,20 @@ void ACoopCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	}
 }
 
+void ACoopCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	UE_LOG(LogTemp, Warning, TEXT("CoopCharacter::PossessedBy called!"));
+
+	if(APlayerController* PC = Cast<APlayerController>(NewController))
+	{
+		PC->EnableInput(PC);
+		PC->SetInputMode(FInputModeGameOnly());
+		PC->bShowMouseCursor = false;
+	}
+}
+
 void ACoopCharacter::Move(const FInputActionValue &Value)
 {
 	FVector2D MoveVector = Value.Get<FVector2D>();

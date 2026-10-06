@@ -18,5 +18,8 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game")
 	int32 CollectedItemsCount = 0;
 
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game")
+	int32 MaxKeys = 3;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const override;
 };
