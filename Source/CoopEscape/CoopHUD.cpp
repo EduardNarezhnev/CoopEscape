@@ -2,28 +2,50 @@
 
 
 #include "CoopHUD.h"
+#include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 #include "CoopCharacter.h"
 #include "CoopHealthComponent.h"
 #include "CoopPlayerState.h"
 #include "CoopGameState.h"
+
+void UCoopHUD::NativeConstruct()
+{
+    Super::NativeConstruct();
+}
 
 void UCoopHUD::UpdateHUD()
 {
     ACoopCharacter* Character = Cast<ACoopCharacter>(GetOwningPlayerPawn());
     if(!Character) return;
 
-    if(Character->HealthComponent)
+    if(HealthBar && Character->HealthComponent)
     {
-        BP_UpdateHealth(Character->HealthComponent->GetHealthPercent());
+        HealthBar->SetPercent(Character->HealthComponent->GetHealthPercent());
     }
 
-    if(ACoopPlayerState* PS = Character->GetPlayerState<ACoopPlayerState>())
+    if(PersonalKeysText)
     {
-        BP_UpdatePersonalKeys(PS->PlayerCollectedItems, 3);
+        if(ACoopPlayerState* PS = Character->GetPlayerState<ACoopPlayerState>())
+        {
+            FString Text = FString::Printf(TEXT("My keys: %d"), PS->PlayerCollectedItems);
+            PersonalKeysText->SetText(FText::FromString(Text));
+        }
     }
 
-    if(ACoopGameState* GS = GetWorld()->GetGameState<ACoopGameState>())
+    if(TotalKeysText)
     {
-        BP_UpdateTotalKeys(GS->CollectedItemsCount, 3);
+        if(ACoopGameState* GS = GetWorld()->GetGameState<ACoopGameState>())
+        {
+            FString Text = FString::Printf(TEXT("Total: %d / %d"), GS->CollectedItemsCount, GS->MaxKeys);
+            TotalKeysText->SetText(FText::FromString(Text));
+        }
+    }
+
+    if(DangerText)
+    {
+        bool bDanger = Character->bIsDangerNear;
+        DangerText->SetVisibility(bDanger ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+        DangerText->SetColorAndOpacity(bDanger ? DangerColor : FLinearColor::White);
     }
 }

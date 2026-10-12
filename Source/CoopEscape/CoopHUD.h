@@ -6,25 +6,34 @@
 #include "Blueprint/UserWidget.h"
 #include "CoopHUD.generated.h"
 
-/**
- * 
- */
+class UProgressBar;
+class UTextBlock;
+
 UCLASS()
 class COOPESCAPE_API UCoopHUD : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
+	virtual void NativeConstruct() override;
+
 	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void UpdateHUD();
 
 protected:
-	UFUNCTION(BlueprintImplementableEvent, Category = "HUD")
-	void BP_UpdateHealth(float HealthPercent);
-	
-	UFUNCTION(BlueprintImplementableEvent, Category = "HUD")
-	void BP_UpdatePersonalKeys(int32 PersonalKeys, int32 MaxKeys);
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UProgressBar> HealthBar;
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "HUD")
-	void BP_UpdateTotalKeys(int32 TotalKeys, int32 MaxKeys);
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> PersonalKeysText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> TotalKeysText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> DangerText;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "HUD")
+	FLinearColor DangerColor = FLinearColor::Red;
 };

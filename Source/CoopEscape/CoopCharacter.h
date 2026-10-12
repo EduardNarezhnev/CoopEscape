@@ -28,6 +28,9 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Inventory")
 	int32 CollectedItems = 0;
 
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "UI")
+	bool bIsDangerNear = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* DefaultMappingContext;
 

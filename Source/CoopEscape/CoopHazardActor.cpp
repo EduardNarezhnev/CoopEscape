@@ -46,12 +46,21 @@ void ACoopHazardActor::Tick(float DeltaTime)
 	if(!HasAuthority()) return;
 
 	AActor* ClosestPlayer = FindClosestPlayer();
+
 	if(!ClosestPlayer)
 	{
 		if(bIsActive)
 		{
 			bIsActive = false;
+			UpdateVisualState();
 		}
+
+		if(CurrentTarget)
+		{
+			Server_UpdateDangerFlag(CurrentTarget, false);
+			CurrentTarget = nullptr;
+		}
+		
 		ReturnToBase(DeltaTime);
 		return;
 	}
@@ -98,15 +107,44 @@ void ACoopHazardActor::UpdateHazardState(AActor* ClosestPlayer, float Distance)
 	float ActivationDist = Config ? Config->ActivationDistance : 500.f;
 	float DeactivationDist = Config ? Config->DeactivationDistance : 800.f;
 
+	ACoopCharacter* Player = Cast<ACoopCharacter>(ClosestPlayer);
+
+	if(Player && Player != CurrentTarget)
+	{
+		if(CurrentTarget)
+		{
+			Server_UpdateDangerFlag(CurrentTarget, false);
+		}
+
+		if(bIsActive)
+		{
+			Server_UpdateDangerFlag(Player, true);
+		}
+
+		CurrentTarget = Player;
+	}
+
 	if(Distance < ActivationDist && !bIsActive)
 	{
 		bIsActive = true;
 		UpdateVisualState();
+
+		if(Player)
+		{
+			Server_UpdateDangerFlag(Player, true);
+			CurrentTarget = Player;
+		}
 	}
 	else if(Distance > DeactivationDist && bIsActive)
 	{
 		bIsActive = false;
 		UpdateVisualState();
+
+		if(Player)
+		{
+			Server_UpdateDangerFlag(Player, false);
+			CurrentTarget = nullptr;
+		}
 	}
 
 	if(bIsActive)
@@ -166,6 +204,14 @@ void ACoopHazardActor::UpdateVisualState()
 	else if(!bIsActive && InactiveMaterial)
 	{
 		MeshComponent->SetMaterial(0, InactiveMaterial);
+	}
+}
+
+void ACoopHazardActor::Server_UpdateDangerFlag_Implementation(class ACoopCharacter* Player, bool bDanger)
+{
+	if(Player)
+	{
+		Player->bIsDangerNear = bDanger;
 	}
 }
 

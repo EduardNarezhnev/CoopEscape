@@ -160,5 +160,7 @@ void ACoopCharacter::HandleHeal(float HealAmount)
 void ACoopCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
     DOREPLIFETIME(ACoopCharacter, CollectedItems);
+	DOREPLIFETIME(ACoopCharacter, bIsDangerNear);
 }

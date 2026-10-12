@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "CoopHazardActor.generated.h"
 
+class ACoopCharacter;
+
 UCLASS()
 class COOPESCAPE_API ACoopHazardActor : public AActor
 {
@@ -48,10 +50,16 @@ protected:
 	UFUNCTION()
 	void OnRep_IsActive();
 
+	UFUNCTION(Server, Reliable)
+	void Server_UpdateDangerFlag(ACoopCharacter* Player, bool bDanger);
+
 private:
 	FVector InitialLocation;
 	bool bCanApplyDamage = true;
 	FTimerHandle DamageCooldownTimer;
 
+	UPROPERTY()
+	ACoopCharacter* CurrentTarget = nullptr;
+	
 	void UpdateHazardState(AActor* ClosestPlayer, float Distance);
 };
