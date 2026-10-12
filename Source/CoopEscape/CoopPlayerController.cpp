@@ -72,6 +72,14 @@ void ACoopPlayerController::Client_ShowGameOver_Implementation(bool bWon)
     }
 }
 
+void ACoopPlayerController::Client_ShowNotification_Implementation(const FString& Message, float Duration)
+{
+    if(HUDWidget)
+    {
+        HUDWidget->ShowNotification(Message, Duration);
+    }
+}
+
 void ACoopPlayerController::Server_RestartGame_Implementation()
 {
     if(ACoopGameMode* GM = GetWorld()->GetAuthGameMode<ACoopGameMode>())

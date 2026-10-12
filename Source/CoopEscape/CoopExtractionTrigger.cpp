@@ -6,6 +6,7 @@
 #include "CoopCharacter.h"
 #include "CoopGameMode.h"
 #include "CoopGameState.h"
+#include "CoopPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
 ACoopExtractionTrigger::ACoopExtractionTrigger()
@@ -42,7 +43,13 @@ void ACoopExtractionTrigger::OnOverlapBegin(AActor* OverlappedActor, AActor* Oth
 
     if(GS->CollectedItemsCount < GS->MaxKeys)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Extraction: Not all keys collected!"));
+        int32 Needed = GS->MaxKeys - GS->CollectedItemsCount;
+
+        if(ACoopPlayerController* PC = Cast<ACoopPlayerController>(Player->GetController()))
+        {
+            FString Message = FString::Printf(TEXT("Need %d more keys!"), Needed);
+            PC->Client_ShowNotification(Message, 2.f);
+        }
         return;
     }
 
@@ -52,7 +59,10 @@ void ACoopExtractionTrigger::OnOverlapBegin(AActor* OverlappedActor, AActor* Oth
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("Extraction: Not all players in zone!"));
+        if(ACoopPlayerController* PC = Cast<ACoopPlayerController>(Player->GetController()))
+        {
+            PC->Client_ShowNotification(TEXT("Waiting for other players..."), 2.f);
+        }
     }
 }
 

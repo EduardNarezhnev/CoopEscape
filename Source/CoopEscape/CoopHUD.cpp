@@ -4,6 +4,7 @@
 #include "CoopHUD.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "TimerManager.h"
 #include "CoopCharacter.h"
 #include "CoopHealthComponent.h"
 #include "CoopPlayerState.h"
@@ -48,4 +49,26 @@ void UCoopHUD::UpdateHUD()
         DangerText->SetVisibility(bDanger ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
         DangerText->SetColorAndOpacity(bDanger ? DangerColor : FLinearColor::White);
     }
+}
+
+void UCoopHUD::ShowNotification(const FString& Message, float Duration)
+{
+    if(!NotificationText) return;
+
+    NotificationText->SetText(FText::FromString(Message));
+    NotificationText->SetVisibility(ESlateVisibility::Visible);
+
+    GetWorld()->GetTimerManager().ClearTimer(NotificationTimer);
+    GetWorld()->GetTimerManager().SetTimer(
+        NotificationTimer,
+        [this]()
+        {
+            if(NotificationText)
+            {
+                NotificationText->SetVisibility(ESlateVisibility::Hidden);
+            }
+        },
+        Duration,
+        false
+    );
 }

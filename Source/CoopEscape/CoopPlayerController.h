@@ -40,6 +40,9 @@ public:
 	UFUNCTION(Client, Reliable)
 	void Client_ShowGameOver(bool bWon);
 
+	UFUNCTION(Client, Reliable)
+	void Client_ShowNotification(const FString& Message, float Duration);
+
 	UFUNCTION(Server, Reliable)
 	void Server_RestartGame();
 
