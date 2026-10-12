@@ -6,9 +6,10 @@
 #include "GameFramework/PlayerController.h"
 #include "CoopPlayerController.generated.h"
 
-/**
- * 
- */
+class UCoopHUD;
+class UCoopMainMenu;
+class UCoopGameOverScreen;
+
 UCLASS()
 class COOPESCAPE_API ACoopPlayerController : public APlayerController
 {
@@ -22,13 +23,25 @@ public:
 	TSubclassOf<UUserWidget> HUDClass;
 
 	UPROPERTY(BlueprintReadOnly, Category = "UI")
-	class UCoopHUD* HUDWidget = nullptr;
+	UCoopHUD* HUDWidget = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UUserWidget> MainMenuClass;
 
 	UPROPERTY(BlueprintReadOnly, Category = "UI")
-	class UCoopMainMenu* MainMenuWidget = nullptr;
+	UCoopMainMenu* MainMenuWidget = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> GameOverClass;
+
+	UPROPERTY(BlueprintReadOnly, Category = "UI")
+	UCoopGameOverScreen* GameOverWidget = nullptr;
+
+	UFUNCTION(Client, Reliable)
+	void Client_ShowGameOver(bool bWon);
+
+	UFUNCTION(Server, Reliable)
+	void Server_RestartGame();
 
 protected:
     void ShowMainMenu();

@@ -39,9 +39,6 @@ protected:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "Game")
-	void BP_GameOver(bool bWon);
-
 private:
 	EGameState CurrentState = EGameState::WaitingToStart;
 };

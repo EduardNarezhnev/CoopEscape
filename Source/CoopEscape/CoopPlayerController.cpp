@@ -4,6 +4,8 @@
 #include "CoopPlayerController.h"
 #include "CoopHUD.h"
 #include "CoopMainMenu.h"
+#include "CoopGameOverScreen.h"
+#include "CoopGameMode.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -49,6 +51,33 @@ void ACoopPlayerController::ShowHUD()
 
     SetInputMode(FInputModeGameOnly());
     bShowMouseCursor = false;
+}
+
+void ACoopPlayerController::Client_ShowGameOver_Implementation(bool bWon)
+{
+    if(!GameOverClass) return;
+
+    GameOverWidget = CreateWidget<UCoopGameOverScreen>(this, GameOverClass);
+    if(GameOverWidget)
+    {
+        GameOverWidget->SetResult(bWon);
+        GameOverWidget->AddToViewport();
+        SetInputMode(FInputModeUIOnly());
+        bShowMouseCursor = true;
+    }
+
+    if(HUDWidget)
+    {
+        HUDWidget->SetVisibility(ESlateVisibility::Hidden);
+    }
+}
+
+void ACoopPlayerController::Server_RestartGame_Implementation()
+{
+    if(ACoopGameMode* GM = GetWorld()->GetAuthGameMode<ACoopGameMode>())
+    {
+        GM->RestartGame();
+    }
 }
 
 void ACoopPlayerController::Tick(float DeltaTime)

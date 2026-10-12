@@ -49,19 +49,18 @@ void ACoopGameMode::GameOver(bool bWon)
 
     CurrentState = EGameState::GameOver;
 
-    UWorld* World = GetWorld();
-    if(World)
+    if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
     {
-        APlayerController* PC = World->GetFirstPlayerController();
-        if(PC)
+        PC->SetPause(true);
+    }
+    
+    for(FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+    {
+        if(ACoopPlayerController* PC = Cast<ACoopPlayerController>(It->Get()))
         {
-            PC->SetPause(true);
-            PC->SetInputMode(FInputModeUIOnly());
-            PC->bShowMouseCursor = true;
+            PC->Client_ShowGameOver(bWon);
         }
     }
-
-    BP_GameOver(bWon);
 }
 
 void ACoopGameMode::RestartGame()
