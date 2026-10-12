@@ -3,20 +3,52 @@
 
 #include "CoopPlayerController.h"
 #include "CoopHUD.h"
+#include "CoopMainMenu.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 void ACoopPlayerController::BeginPlay()
 {
     Super::BeginPlay();
     
-    if(IsLocalController() && HUDClass)
+    if(!IsLocalController()) return;
+    FString CurrentLevel = UGameplayStatics::GetCurrentLevelName(this);
+
+    if(CurrentLevel == "MainMenu")
     {
-        HUDWidget = CreateWidget<UCoopHUD>(this, HUDClass);
-        if(HUDWidget)
-        {
-            HUDWidget->AddToViewport();
-        }
+        ShowMainMenu();
     }
+    else
+    {
+        ShowHUD();
+    }
+}
+
+void ACoopPlayerController::ShowMainMenu()
+{
+    if(!MainMenuClass) return;
+
+    MainMenuWidget = CreateWidget<UCoopMainMenu>(this, MainMenuClass);
+    if(MainMenuWidget)
+    {
+        MainMenuWidget->AddToViewport();
+        SetInputMode(FInputModeUIOnly());
+        bShowMouseCursor = true;
+    }
+}
+
+void ACoopPlayerController::ShowHUD()
+{
+    if(!HUDClass) return;
+
+    HUDWidget = CreateWidget<UCoopHUD>(this, HUDClass);
+    if(HUDWidget)
+    {
+        HUDWidget->AddToViewport();
+    }
+
+    SetInputMode(FInputModeGameOnly());
+    bShowMouseCursor = false;
 }
 
 void ACoopPlayerController::Tick(float DeltaTime)

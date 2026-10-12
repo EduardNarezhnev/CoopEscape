@@ -23,4 +23,14 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "UI")
 	class UCoopHUD* HUDWidget = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> MainMenuClass;
+
+	UPROPERTY(BlueprintReadOnly, Category = "UI")
+	class UCoopMainMenu* MainMenuWidget = nullptr;
+
+protected:
+    void ShowMainMenu();
+    void ShowHUD();
 };
