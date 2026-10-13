@@ -9,6 +9,7 @@
 class UCoopHUD;
 class UCoopMainMenu;
 class UCoopGameOverScreen;
+class UCoopScreenEffect;
 
 UCLASS()
 class COOPESCAPE_API ACoopPlayerController : public APlayerController
@@ -22,20 +23,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UUserWidget> HUDClass;
 
-	UPROPERTY(BlueprintReadOnly, Category = "UI")
-	UCoopHUD* HUDWidget = nullptr;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UUserWidget> MainMenuClass;
-
-	UPROPERTY(BlueprintReadOnly, Category = "UI")
-	UCoopMainMenu* MainMenuWidget = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UUserWidget> GameOverClass;
 
-	UPROPERTY(BlueprintReadOnly, Category = "UI")
-	UCoopGameOverScreen* GameOverWidget = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> ScreenEffectClass;
 
 	UFUNCTION(Client, Reliable)
 	void Client_ShowGameOver(bool bWon);
@@ -43,10 +38,27 @@ public:
 	UFUNCTION(Client, Reliable)
 	void Client_ShowNotification(const FString& Message, float Duration);
 
+	UFUNCTION(Client, Reliable)
+	void Client_ShowScreenEffect(const FLinearColor& Color, float Duration);
+
 	UFUNCTION(Server, Reliable)
 	void Server_RestartGame();
 
 protected:
     void ShowMainMenu();
     void ShowHUD();
+
+private:
+	UPROPERTY()
+	UCoopHUD* HUDWidget = nullptr;
+
+	UPROPERTY()
+	UCoopMainMenu* MainMenuWidget = nullptr;
+
+	UPROPERTY()
+	UCoopGameOverScreen* GameOverWidget = nullptr;
+
+	UPROPERTY()
+	UCoopScreenEffect* ScreenEffectWidget = nullptr;
+
 };

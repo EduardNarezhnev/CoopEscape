@@ -5,6 +5,7 @@
 #include "CoopHUD.h"
 #include "CoopMainMenu.h"
 #include "CoopGameOverScreen.h"
+#include "CoopScreenEffect.h"
 #include "CoopGameMode.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
@@ -77,6 +78,18 @@ void ACoopPlayerController::Client_ShowNotification_Implementation(const FString
     if(HUDWidget)
     {
         HUDWidget->ShowNotification(Message, Duration);
+    }
+}
+
+void ACoopPlayerController::Client_ShowScreenEffect_Implementation(const FLinearColor& Color, float Duration)
+{
+    if(!ScreenEffectClass) return;
+      
+    ScreenEffectWidget = CreateWidget<UCoopScreenEffect>(this, ScreenEffectClass);
+    if(ScreenEffectWidget)
+    {
+        ScreenEffectWidget->AddToViewport();
+        ScreenEffectWidget->PlayEffect(Color, Duration);
     }
 }
 

@@ -48,12 +48,6 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
-    void BP_ShowDamageEffect();
-
-    UFUNCTION(BlueprintImplementableEvent, Category = "UI")
-    void BP_ShowHealEffect();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

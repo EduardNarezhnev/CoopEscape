@@ -6,6 +6,7 @@
 #include "Components/InputComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "CoopHealthComponent.h"
+#include "CoopPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
@@ -84,8 +85,6 @@ void ACoopCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	UE_LOG(LogTemp, Warning, TEXT("CoopCharacter::PossessedBy called!"));
-
 	if(APlayerController* PC = Cast<APlayerController>(NewController))
 	{
 		PC->EnableInput(PC);
@@ -131,7 +130,6 @@ float ACoopCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 		HealthComponent->TakeDamage(DamageAmount);
 		return DamageAmount;
 	}
-
 	return 0.f;
 }
 
@@ -147,14 +145,18 @@ void ACoopCharacter::HandleDeath()
 
 void ACoopCharacter::HandleDamage(float DamageAmount)
 {
-    // Красный экран + звук урона (через BP)
-    BP_ShowDamageEffect();
+	if(ACoopPlayerController* PC = Cast<ACoopPlayerController>(GetController()))
+	{
+		PC->Client_ShowScreenEffect(FLinearColor(1, 0, 0, 1), 0.3f);
+	}
 }
 
 void ACoopCharacter::HandleHeal(float HealAmount)
 {
-    // Зелёный экран + звук лечения (через BP)
-    BP_ShowHealEffect();
+    if(ACoopPlayerController* PC = Cast<ACoopPlayerController>(GetController()))
+	{
+		PC->Client_ShowScreenEffect(FLinearColor(0, 1, 0, 1), 0.3f);
+	}
 }
 
 void ACoopCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
