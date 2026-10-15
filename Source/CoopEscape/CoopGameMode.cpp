@@ -65,8 +65,6 @@ void ACoopGameMode::GameOver(bool bWon)
 
 void ACoopGameMode::RestartGame()
 {
-    if(CurrentState != EGameState::GameOver) return;
-
     FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
     GetWorld()->ServerTravel(CurrentLevelName + "?listen");
 }

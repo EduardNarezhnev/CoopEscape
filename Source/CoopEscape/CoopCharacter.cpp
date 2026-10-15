@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "CoopHealthComponent.h"
 #include "CoopPlayerController.h"
+#include "CoopGameMode.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
@@ -141,6 +142,11 @@ void ACoopCharacter::HandleDeath()
 	}
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	if(ACoopGameMode* GM = GetWorld()->GetAuthGameMode<ACoopGameMode>())
+	{
+		GM->GameOver(false);
+	}
 }
 
 void ACoopCharacter::HandleDamage(float DamageAmount)
