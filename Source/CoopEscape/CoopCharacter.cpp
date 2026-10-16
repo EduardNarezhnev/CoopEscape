@@ -32,6 +32,11 @@ ACoopCharacter::ACoopCharacter()
 
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	StaticMeshComponent->SetupAttachment(RootComponent);
+	StaticMeshComponent->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	HealthComponent = CreateDefaultSubobject<UCoopHealthComponent>(TEXT("HealthComponent"));
 }
 
