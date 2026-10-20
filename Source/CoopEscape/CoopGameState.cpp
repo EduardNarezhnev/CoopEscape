@@ -9,4 +9,6 @@ void ACoopGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLi
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME(ACoopGameState, CollectedItemsCount);
+    DOREPLIFETIME(ACoopGameState, MaxKeys);
+    DOREPLIFETIME(ACoopGameState, bIsPaused);
 }

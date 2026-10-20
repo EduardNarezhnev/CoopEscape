@@ -19,14 +19,11 @@ public:
 	// Sets default values for this component's properties
 	UCoopHealthComponent();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health")
 	float MaxHealth = 100.f;
 
-	UPROPERTY(ReplicatedUsing = OnRep_Health, BlueprintReadOnly, Category = "Health")
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Health")
 	float CurrentHealth = 100.f;
-
-	UFUNCTION()
-	void OnRep_Health();
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void TakeDamage(float Damage);

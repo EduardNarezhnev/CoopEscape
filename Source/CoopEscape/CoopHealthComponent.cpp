@@ -21,12 +21,6 @@ void UCoopHealthComponent::BeginPlay()
 	CurrentHealth = MaxHealth;	
 }
 
-void UCoopHealthComponent::OnRep_Health()
-{
-	// Called on clients when CurrentHealth changes
-	// HUD update
-}
-
 void UCoopHealthComponent::TakeDamage(float Damage)
 {
 	if(!GetOwner()->HasAuthority()) return;

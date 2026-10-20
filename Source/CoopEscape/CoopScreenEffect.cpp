@@ -21,21 +21,23 @@ void UCoopScreenEffect::PlayEffect(const FLinearColor& Color, float Duration)
    if (!FlashImage) return;
 
    CurrentColor = Color;
-   CurrentColor.A = 1.f;
    CurrentAlpha = 1.f;
    FadeSpeed = 1.f / FMath::Max(Duration, 0.01f);
 
    FlashImage->SetVisibility(ESlateVisibility::Visible);
    FlashImage->SetColorAndOpacity(CurrentColor);
 
-   GetWorld()->GetTimerManager().ClearTimer(EffectTimer);
-   GetWorld()->GetTimerManager().SetTimer(
-        EffectTimer, 
-        this,
-        &UCoopScreenEffect::UpdateEffect,
-        UpdateInterval,
-        true
-    );
+    if (UWorld* World = GetWorld())
+    {
+        World->GetTimerManager().ClearTimer(EffectTimer);
+        World->GetTimerManager().SetTimer(
+            EffectTimer,
+            this,
+            &UCoopScreenEffect::UpdateEffect,
+            UpdateInterval,
+            true
+        );
+    }
 }
 
 void UCoopScreenEffect::UpdateEffect()
@@ -49,7 +51,10 @@ void UCoopScreenEffect::UpdateEffect()
 
     if(CurrentAlpha <= 0.f)
     {
-        GetWorld()->GetTimerManager().ClearTimer(EffectTimer);
+        if (UWorld* World = GetWorld())
+        {
+            World->GetTimerManager().ClearTimer(EffectTimer);
+        }
         FlashImage->SetVisibility(ESlateVisibility::Hidden);
     }
 }

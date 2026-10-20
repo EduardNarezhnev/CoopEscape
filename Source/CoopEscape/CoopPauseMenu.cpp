@@ -28,7 +28,7 @@ void UCoopPauseMenu::OnResumeClicked()
 {
     if(ACoopPlayerController* PC = Cast<ACoopPlayerController>(GetOwningPlayer()))
     {
-        PC->TogglePause();
+        PC->Server_TogglePause();
     }
 }
 
@@ -36,7 +36,6 @@ void UCoopPauseMenu::OnRestartClicked()
 {
     if(ACoopPlayerController* PC = Cast<ACoopPlayerController>(GetOwningPlayer()))
     {
-        PC->SetPause(false);
         PC->Server_RestartGame();
     }
 }

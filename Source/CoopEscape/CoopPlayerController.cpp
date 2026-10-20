@@ -8,6 +8,7 @@
 #include "CoopScreenEffect.h"
 #include "CoopPauseMenu.h"
 #include "CoopGameMode.h"
+#include "CoopGameState.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "EnhancedInputComponent.h"
@@ -102,51 +103,38 @@ void ACoopPlayerController::TogglePause()
 
 void ACoopPlayerController::Server_TogglePause_Implementation()
 {
-     bIsPaused = !bIsPaused;
-    UE_LOG(LogTemp, Warning, TEXT("Server_TogglePause: bIsPaused = %s"), bIsPaused ? TEXT("true") : TEXT("false"));
+    ACoopGameState* GS = GetWorld()->GetGameState<ACoopGameState>();
+    if (!GS) return;
 
-    // Ставим паузу НАПРЯМУЮ на сервере
-    SetPause(bIsPaused);
-    UE_LOG(LogTemp, Warning, TEXT("SetPause(%s) called on server"), bIsPaused ? TEXT("true") : TEXT("false"));
+    GS->bIsPaused = !GS->bIsPaused;
 
-    // Рассылаем клиентам
-    if (AGameStateBase* GS = GetWorld()->GetGameState())
+    SetPause(GS->bIsPaused);
+
+    for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
     {
-        for (APlayerState* PS : GS->PlayerArray)
+        if (ACoopPlayerController* PC = Cast<ACoopPlayerController>(It->Get()))
         {
-            if (ACoopPlayerState* CoopPS = Cast<ACoopPlayerState>(PS))
-            {
-                if (ACoopPlayerController* PC = Cast<ACoopPlayerController>(CoopPS->GetOwner()))
-                {
-                    PC->Client_SetPause(bIsPaused);
-                }
-            }
+            PC->Client_SetPause(GS->bIsPaused);
         }
     }
 }
 
 void ACoopPlayerController::Client_SetPause_Implementation(bool bPause)
 {
-     SetPause(bPause);
+    if (bPause && GameOverWidget) return;
+
+    SetPause(bPause);
 
     if (bPause)
     {
-        if (PauseMenuClass)
+        if (PauseMenuClass && !PauseWidget)
         {
             PauseWidget = CreateWidget<UCoopPauseMenu>(this, PauseMenuClass);
-            if (PauseWidget)
-            {
-                PauseWidget->AddToViewport();
-            }
+            if (PauseWidget) PauseWidget->AddToViewport();
         }
-
         SetInputMode(FInputModeUIOnly());
         bShowMouseCursor = true;
-
-        if (HUDWidget)
-        {
-            HUDWidget->SetVisibility(ESlateVisibility::Hidden);
-        }
+        if (HUDWidget) HUDWidget->SetVisibility(ESlateVisibility::Hidden);
     }
     else
     {
@@ -155,14 +143,9 @@ void ACoopPlayerController::Client_SetPause_Implementation(bool bPause)
             PauseWidget->RemoveFromParent();
             PauseWidget = nullptr;
         }
-
         SetInputMode(FInputModeGameOnly());
         bShowMouseCursor = false;
-
-        if (HUDWidget)
-        {
-            HUDWidget->SetVisibility(ESlateVisibility::Visible);
-        }
+        if (HUDWidget) HUDWidget->SetVisibility(ESlateVisibility::Visible);
     }
 }
 
@@ -183,6 +166,12 @@ void ACoopPlayerController::Client_ShowGameOver_Implementation(bool bWon)
     {
         HUDWidget->SetVisibility(ESlateVisibility::Hidden);
     }
+
+    if (PauseWidget)
+    {
+        PauseWidget->RemoveFromParent();
+        PauseWidget = nullptr;
+    }
 }
 
 void ACoopPlayerController::Client_ShowNotification_Implementation(const FString& Message, float Duration)
@@ -197,19 +186,21 @@ void ACoopPlayerController::Client_ShowScreenEffect_Implementation(const FLinear
 {
     if(!ScreenEffectClass) return;
       
-    ScreenEffectWidget = CreateWidget<UCoopScreenEffect>(this, ScreenEffectClass);
-    if(ScreenEffectWidget)
+    if (!ScreenEffectWidget)
     {
-        ScreenEffectWidget->AddToViewport();
+        ScreenEffectWidget = CreateWidget<UCoopScreenEffect>(this, ScreenEffectClass);
+        if (ScreenEffectWidget) ScreenEffectWidget->AddToViewport();
+    }
+
+    if (ScreenEffectWidget)
+    {
         ScreenEffectWidget->PlayEffect(Color, Duration);
     }
 }
 
 void ACoopPlayerController::Server_RestartGame_Implementation()
 {
-    SetPause(false);
-
-    if(ACoopGameMode* GM = GetWorld()->GetAuthGameMode<ACoopGameMode>())
+    if (ACoopGameMode* GM = GetWorld()->GetAuthGameMode<ACoopGameMode>())
     {
         GM->RestartGame();
     }

@@ -10,11 +10,6 @@
 #include "CoopPlayerState.h"
 #include "CoopGameState.h"
 
-void UCoopHUD::NativeConstruct()
-{
-    Super::NativeConstruct();
-}
-
 void UCoopHUD::UpdateHUD()
 {
     ACoopCharacter* Character = Cast<ACoopCharacter>(GetOwningPlayerPawn());

@@ -27,8 +27,4 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class UStaticMeshComponent* MeshComponent;
-
-private:
-	UPROPERTY()
-	TArray<class ACoopCharacter*> PlayersInZone;
 };

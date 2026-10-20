@@ -141,6 +141,8 @@ float ACoopCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 
 void ACoopCharacter::HandleDeath()
 {
+	if(!HasAuthority()) return;
+	
 	if(APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
 		PC->DisableInput(PC);

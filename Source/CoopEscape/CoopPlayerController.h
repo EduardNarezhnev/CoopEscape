@@ -64,7 +64,6 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_RestartGame();
 
-	UFUNCTION(BlueprintCallable, Category = "UI")
 	void TogglePause();
 
 protected:
@@ -86,7 +85,4 @@ private:
 
 	UPROPERTY()
 	UCoopPauseMenu* PauseWidget = nullptr;
-
-	bool bIsPaused = false;
-
 };

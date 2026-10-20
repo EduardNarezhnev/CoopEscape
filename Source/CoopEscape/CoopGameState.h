@@ -21,5 +21,8 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game")
 	int32 MaxKeys = 3;
 
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game")
+    bool bIsPaused = false;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const override;
 };

@@ -15,9 +15,6 @@ class COOPESCAPE_API UCoopHUD : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void NativeConstruct() override;
-
-	UFUNCTION(BlueprintCallable, Category = "HUD")
 	void UpdateHUD();
 
 	void ShowNotification(const FString& Message, float Duration = 2.f);
@@ -38,9 +35,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> NotificationText;
 
-	FTimerHandle NotificationTimer;
-
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "HUD")
 	FLinearColor DangerColor = FLinearColor::Red;
+
+	FTimerHandle NotificationTimer;
 };

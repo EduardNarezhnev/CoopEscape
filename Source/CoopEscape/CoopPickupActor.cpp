@@ -18,7 +18,6 @@ ACoopPickupActor::ACoopPickupActor()
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(MeshComponent);
-	MeshComponent->SetCollisionProfileName("OverlapAllDynamic");
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	SphereComponent->SetupAttachment(RootComponent);

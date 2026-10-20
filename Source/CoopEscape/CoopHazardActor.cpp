@@ -68,6 +68,7 @@ void ACoopHazardActor::Tick(float DeltaTime)
 	float Distance = FVector::Dist(GetActorLocation(), ClosestPlayer->GetActorLocation());
 	UpdateHazardState(ClosestPlayer, Distance);
 
+	// Apply damage through GetOverlappingActors (not OnOverlapBegin)
     if (bIsActive && bCanApplyDamage)
     {
         TArray<AActor*> OverlappingActors;
@@ -109,6 +110,7 @@ void ACoopHazardActor::UpdateHazardState(AActor* ClosestPlayer, float Distance)
 
 	ACoopCharacter* Player = Cast<ACoopCharacter>(ClosestPlayer);
 
+	// Target change when reaggroing
 	if(Player && Player != CurrentTarget)
 	{
 		if(CurrentTarget)
@@ -207,7 +209,7 @@ void ACoopHazardActor::UpdateVisualState()
 	}
 }
 
-void ACoopHazardActor::Server_UpdateDangerFlag_Implementation(class ACoopCharacter* Player, bool bDanger)
+void ACoopHazardActor::Server_UpdateDangerFlag_Implementation(ACoopCharacter* Player, bool bDanger)
 {
 	if(Player)
 	{

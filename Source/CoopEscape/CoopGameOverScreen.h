@@ -17,7 +17,6 @@ class COOPESCAPE_API UCoopGameOverScreen : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
-	UFUNCTION(BlueprintCallable, Category = "UI")
 	void SetResult(bool bWon);
 
 protected:
