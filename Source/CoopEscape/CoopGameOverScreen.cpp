@@ -1,11 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "CoopGameOverScreen.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "CoopPlayerController.h"
-#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 void UCoopGameOverScreen::NativeConstruct()

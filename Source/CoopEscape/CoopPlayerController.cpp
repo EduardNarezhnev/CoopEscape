@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "CoopPlayerController.h"
 #include "CoopHUD.h"
 #include "CoopMainMenu.h"
@@ -15,8 +12,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
-#include "CoopPlayerState.h"
-#include "GameFramework/GameStateBase.h"
 
 void ACoopPlayerController::BeginPlay()
 {
@@ -130,11 +125,19 @@ void ACoopPlayerController::Client_SetPause_Implementation(bool bPause)
         if (PauseMenuClass && !PauseWidget)
         {
             PauseWidget = CreateWidget<UCoopPauseMenu>(this, PauseMenuClass);
-            if (PauseWidget) PauseWidget->AddToViewport();
+            if (PauseWidget)
+            {
+                PauseWidget->AddToViewport();
+                PauseWidget->SetFocus();
+            }
         }
+
         SetInputMode(FInputModeUIOnly());
         bShowMouseCursor = true;
-        if (HUDWidget) HUDWidget->SetVisibility(ESlateVisibility::Hidden);
+        if (HUDWidget)
+        {
+            HUDWidget->SetVisibility(ESlateVisibility::Hidden);
+        }
     }
     else
     {
@@ -143,9 +146,13 @@ void ACoopPlayerController::Client_SetPause_Implementation(bool bPause)
             PauseWidget->RemoveFromParent();
             PauseWidget = nullptr;
         }
+
         SetInputMode(FInputModeGameOnly());
         bShowMouseCursor = false;
-        if (HUDWidget) HUDWidget->SetVisibility(ESlateVisibility::Visible);
+        if (HUDWidget)
+        {
+            HUDWidget->SetVisibility(ESlateVisibility::Visible);
+        }
     }
 }
 

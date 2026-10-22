@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "CoopCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
@@ -8,17 +5,14 @@
 #include "CoopHealthComponent.h"
 #include "CoopPlayerController.h"
 #include "CoopGameMode.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
 
-// Sets default values
 ACoopCharacter::ACoopCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	
 	bReplicates = true;
@@ -40,7 +34,6 @@ ACoopCharacter::ACoopCharacter()
 	HealthComponent = CreateDefaultSubobject<UCoopHealthComponent>(TEXT("HealthComponent"));
 }
 
-// Called when the game starts or when spawned
 void ACoopCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -64,7 +57,6 @@ void ACoopCharacter::BeginPlay()
 	}
 }
 
-// Called to bind functionality to input
 void ACoopCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);

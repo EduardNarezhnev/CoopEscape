@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "CoopHealthPickup.h"
 #include "CoopCharacter.h"
 #include "CoopHealthComponent.h"

@@ -4,7 +4,7 @@
 #include "CoopMainMenu.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
-#include "Kismet/GameplayStatics.h"
+// #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 void UCoopMainMenu::NativeConstruct()
@@ -27,7 +27,11 @@ void UCoopMainMenu::NativeConstruct()
 
 void UCoopMainMenu::OnHostClicked()
 {
-    UGameplayStatics::OpenLevel(this, FName("Main"), true, "listen");
+    // UGameplayStatics::OpenLevel(this, FName("Main"), true, "listen");
+    if (UWorld* World = GetWorld())
+    {
+        World->ServerTravel("/Game/Maps/Main?listen");
+    }
 }
 
 void UCoopMainMenu::OnJoinClicked()

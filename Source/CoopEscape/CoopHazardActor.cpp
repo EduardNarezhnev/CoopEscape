@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "CoopHazardActor.h"
 #include "CoopHazardConfig.h"
 #include "Components/BoxComponent.h"
@@ -8,7 +5,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
-// Sets default values
 ACoopHazardActor::ACoopHazardActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
