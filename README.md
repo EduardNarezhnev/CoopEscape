@@ -56,6 +56,12 @@ Unzip the archive and run `CoopEscape.exe`.
 1. Run `CoopEscape.exe` on the first PC → **Host**.
 2. Run `CoopEscape.exe` on the second PC → **Join** → enter the first PC's IP (e.g., `192.168.1.10`).
 
+## Known Limitations
+
+- Listen Server only (no Dedicated Server).
+- No Host Migration when the host disconnects.
+- Windows 64-bit only.
+
 ## Contact
 
 GitHub: [EduardNarezhnev](https://github.com/EduardNarezhnev)

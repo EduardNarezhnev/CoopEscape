@@ -56,6 +56,12 @@ Unreal Engine 5.6, C++ (основная логика), Blueprint (UI), Enhanced
 1. Запусти `CoopEscape.exe` на первом ПК → **Host**.
 2. Запусти `CoopEscape.exe` на втором ПК → **Join** → введи IP первого ПК (например, `192.168.1.10`).
 
+## Ограничения
+
+- Только Listen Server (без Dedicated Server).
+- Нет Host Migration при выходе хоста.
+- Только Windows 64-bit.
+
 ## Контакты
 
 GitHub: [EduardNarezhnev](https://github.com/EduardNarezhnev)
